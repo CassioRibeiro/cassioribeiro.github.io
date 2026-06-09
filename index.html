@@ -485,46 +485,12 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <script>
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const CAT_COLORS={'Alimentação':'#f97316','Transporte':'#fb923c','Moradia':'#fdba74','Saúde':'#a78bfa','Educação':'#60a5fa','Filhas':'#f472b6','Lazer':'#34d399','Salário':'#4ade80','Outros':'#9ca3af'};
-const PATRIMONIO_INVEST=38500;
+const PATRIMONIO_INVEST=0;
 
 const hoje=new Date();
-let mes=hoje.getMonth(),ano=hoje.getFullYear(),light=false,tipo='entrada',eid=null,nid=11,evolInst=null;
+let mes=hoje.getMonth(),ano=hoje.getFullYear(),light=false,tipo='entrada',eid=null,nid=1,evolInst=null;
 
-let dados=[
-  {id:1,data:'2025-06-01',desc:'Salário SENAC',cat:'Salário',tipo:'entrada',valor:3200,obs:''},
-  {id:2,data:'2025-06-02',desc:'Salário Tesouro',cat:'Salário',tipo:'entrada',valor:2600,obs:''},
-  {id:3,data:'2025-06-03',desc:'Dividendos FIIs',cat:'Outros',tipo:'entrada',valor:420,obs:'jun/25'},
-  {id:4,data:'2025-06-05',desc:'Supermercado',cat:'Alimentação',tipo:'saida',valor:380,obs:''},
-  {id:5,data:'2025-06-06',desc:'Aluguel',cat:'Moradia',tipo:'saida',valor:900,obs:''},
-  {id:6,data:'2025-06-08',desc:'Escola filhas',cat:'Filhas',tipo:'saida',valor:390,obs:'mensalidade'},
-  {id:7,data:'2025-06-10',desc:'Academia',cat:'Saúde',tipo:'saida',valor:120,obs:''},
-  {id:8,data:'2025-06-12',desc:'Gasolina',cat:'Transporte',tipo:'saida',valor:220,obs:''},
-  {id:9,data:'2025-06-15',desc:'Mercado',cat:'Alimentação',tipo:'saida',valor:310,obs:''},
-  {id:10,data:'2025-06-18',desc:'Material escolar',cat:'Filhas',tipo:'saida',valor:180,obs:'cadernos'},
-  {id:11,data:'2025-05-01',desc:'Salário SENAC',cat:'Salário',tipo:'entrada',valor:3200,obs:''},
-  {id:12,data:'2025-05-02',desc:'Salário Tesouro',cat:'Salário',tipo:'entrada',valor:2600,obs:''},
-  {id:13,data:'2025-05-03',desc:'Dividendos FIIs',cat:'Outros',tipo:'entrada',valor:400,obs:''},
-  {id:14,data:'2025-05-05',desc:'Supermercado',cat:'Alimentação',tipo:'saida',valor:420,obs:''},
-  {id:15,data:'2025-05-06',desc:'Aluguel',cat:'Moradia',tipo:'saida',valor:900,obs:''},
-  {id:16,data:'2025-05-08',desc:'Escola filhas',cat:'Filhas',tipo:'saida',valor:390,obs:'mensalidade'},
-  {id:17,data:'2025-05-10',desc:'Academia',cat:'Saúde',tipo:'saida',valor:120,obs:''},
-  {id:18,data:'2025-04-01',desc:'Salário SENAC',cat:'Salário',tipo:'entrada',valor:3200,obs:''},
-  {id:19,data:'2025-04-02',desc:'Salário Tesouro',cat:'Salário',tipo:'entrada',valor:2600,obs:''},
-  {id:20,data:'2025-04-05',desc:'Supermercado',cat:'Alimentação',tipo:'saida',valor:350,obs:''},
-  {id:21,data:'2025-04-06',desc:'Aluguel',cat:'Moradia',tipo:'saida',valor:900,obs:''},
-  {id:22,data:'2025-03-01',desc:'Salário SENAC',cat:'Salário',tipo:'entrada',valor:3000,obs:''},
-  {id:23,data:'2025-03-02',desc:'Salário Tesouro',cat:'Salário',tipo:'entrada',valor:2600,obs:''},
-  {id:24,data:'2025-03-05',desc:'Supermercado',cat:'Alimentação',tipo:'saida',valor:400,obs:''},
-  {id:25,data:'2025-03-06',desc:'Aluguel',cat:'Moradia',tipo:'saida',valor:900,obs:''},
-  {id:26,data:'2025-02-01',desc:'Salário SENAC',cat:'Salário',tipo:'entrada',valor:3000,obs:''},
-  {id:27,data:'2025-02-02',desc:'Salário Tesouro',cat:'Salário',tipo:'entrada',valor:2600,obs:''},
-  {id:28,data:'2025-02-06',desc:'Aluguel',cat:'Moradia',tipo:'saida',valor:900,obs:''},
-  {id:29,data:'2025-01-01',desc:'Salário SENAC',cat:'Salário',tipo:'entrada',valor:3000,obs:''},
-  {id:30,data:'2025-01-02',desc:'Salário Tesouro',cat:'Salário',tipo:'entrada',valor:2600,obs:''},
-  {id:31,data:'2025-01-06',desc:'Aluguel',cat:'Moradia',tipo:'saida',valor:900,obs:''},
-];
-nid=32;
-
+let dados=[];
 function fmt(v){return'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function getMes(m,a){return dados.filter(l=>{const d=new Date(l.data+'T12:00:00');return d.getMonth()===m&&d.getFullYear()===a})}
 function resumo(lista){let r=0,d=0;lista.forEach(l=>l.tipo==='entrada'?r+=l.valor:d+=l.valor);return{rec:r,desp:d,saldo:r-d}}
@@ -763,14 +729,8 @@ function renderLanc(){
   }).join('');
 }
 
-let invRF=[
-  {id:1,nome:'CDB Banco Inter',inst:'Banco Inter',aplicado:10000,taxa:'12,5% a.a.',venc:'2027-01',atual:11200},
-  {id:2,nome:'Tesouro IPCA+ 2030',inst:'Tesouro Direto',aplicado:15000,taxa:'IPCA + 5,8%',venc:'2030-05',atual:16400},
-];
-let invFII=[
-  {id:1,ticker:'HGLG11',cotas:30,pmedio:168.50,vatual:172.00,div:48},
-  {id:2,ticker:'XPML11',cotas:50,pmedio:109.00,vatual:111.50,div:52},
-];
+let invRF=[];
+let invFII=[];
 let invNid=3,tipoInvAtual='rf',editInvId=null,editInvTipo=null;
 
 function fmtInv(v){return'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -856,14 +816,8 @@ function setTipoInv(t){
 }
 
 
-let dividas=[
-  {id:1,desc:'Notebook Samsung',total:3000,nparc:10,pagas:2,venc:15,deLancamento:true},
-  {id:2,desc:'Tênis Nike',total:600,nparc:6,pagas:1,venc:10,deLancamento:true},
-];
-let metas=[
-  {id:1,desc:'Reserva de emergência',alvo:10000,atual:6000,prazo:'2025-12'},
-  {id:2,desc:'Viagem de férias',alvo:4000,atual:3200,prazo:'2025-07'},
-];
+let dividas=[];
+let metas=[];
 let divNid=3,metNid=3,editDivId=null,editMetId=null;
 
 function fmtDiv(v){return'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -1131,15 +1085,19 @@ function tgTheme(){
 }
 
 function goTo(id,el){
+  const sec=document.getElementById('sec-'+id);
+  if(!sec)return;
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.si').forEach(s=>s.classList.remove('on'));
-  document.getElementById('sec-'+id).classList.add('on');
+  sec.classList.add('on');
   el.classList.add('on');
 }
 function goToM(id,el){
+  const sec=document.getElementById('sec-'+id);
+  if(!sec)return;
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.bnn').forEach(s=>s.classList.remove('on'));
-  document.getElementById('sec-'+id).classList.add('on');
+  sec.classList.add('on');
   el.classList.add('on');
   const map={dash:'dash',lanc:'lanc',inv:'inv',div:'div',met:'met'};
   document.querySelectorAll('.si').forEach((s,i)=>{if(['dash','lanc','inv','div','met'][i]===id)s.classList.add('on')});
@@ -1154,21 +1112,32 @@ const SCOPES='https://www.googleapis.com/auth/spreadsheets';
 let gsToken=null;
 
 function gsLogin(){
-  const client=google.accounts.oauth2.initTokenClient({
-    client_id:CLIENT_ID,
-    scope:SCOPES,
-    callback:(resp)=>{
-      if(resp.error)return;
-      gsToken=resp.access_token;
-      const payload=JSON.parse(atob(resp.access_token.split('.')[1]||btoa('{"email":""}')));
-      document.getElementById('btn-login').style.display='none';
-      document.getElementById('btn-logout').style.display='flex';
-      document.getElementById('user-name').textContent='Conectado';
-      document.getElementById('btn-salvar-gs').style.display='flex';
-      gsCarregarTudo();
-    }
-  });
-  client.requestAccessToken();
+  gsMostrarToast('⏳ Aguardando login...');
+  try{
+    const client=google.accounts.oauth2.initTokenClient({
+      client_id:CLIENT_ID,
+      scope:SCOPES,
+      callback:(resp)=>{
+        if(resp.error){
+          gsMostrarToast('❌ Erro: '+resp.error);
+          return;
+        }
+        gsToken=resp.access_token;
+        document.getElementById('btn-login').style.display='none';
+        document.getElementById('btn-logout').style.display='flex';
+        document.getElementById('user-name').textContent='✓ Conectado';
+        document.getElementById('btn-salvar-gs').style.display='flex';
+        gsMostrarToast('✅ Login realizado! Carregando dados...');
+        gsCarregarTudo();
+      },
+      error_callback:(err)=>{
+        gsMostrarToast('❌ Erro no login: '+(err.type||'desconhecido'));
+      }
+    });
+    client.requestAccessToken({prompt:'consent'});
+  }catch(e){
+    gsMostrarToast('❌ Erro ao iniciar login: '+e.message);
+  }
 }
 
 function gsLogout(){
