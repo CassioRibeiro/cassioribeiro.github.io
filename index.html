@@ -28,13 +28,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .logo-dot{width:20px;height:20px;border-radius:5px;background:var(--or);flex-shrink:0}
 .tbtn{background:var(--bg3);border:.5px solid var(--bd2);border-radius:20px;padding:6px 14px;color:var(--ts);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s}
 .tbtn:hover{background:var(--bg3);filter:brightness(1.1)}
-.layout{display:flex;flex:1}
-.sb{width:210px;background:var(--bg2);border-right:.5px solid var(--bd);flex-shrink:0;display:flex;flex-direction:column;padding:1rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.layout{display:flex;flex:1;min-height:calc(100vh - 52px)}
+.sb{width:210px;background:var(--bg2);border-right:.5px solid var(--bd);flex-shrink:0;display:flex;flex-direction:column;padding:1rem 0;min-height:calc(100vh - 52px)}
 .si{display:flex;align-items:center;gap:10px;padding:10px 1.25rem;color:var(--ts);font-size:14px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;user-select:none}
 .si:hover{background:var(--orb);color:var(--tp)}
 .si.on{border-left-color:var(--or);background:var(--orb);color:var(--or)}
 .si i{font-size:18px}
-.main{flex:1;padding:1.5rem;background:var(--bg);max-width:960px}
+.main{flex:1;padding:1.5rem;background:var(--bg);max-width:960px;min-height:calc(100vh - 52px)}
 .sec{display:none}.sec.on{display:block}
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px}
 .page-title{font-size:18px;font-weight:500;color:var(--tp)}
@@ -129,21 +129,20 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <div class="shell">
   <div class="topbar">
     <div class="logo"><div class="logo-dot"></div>Controle Financeiro</div>
-    <button class="tbtn" id="btn-salvar-gs" onclick="gsSalvarTudo()" style="display:none;background:rgba(249,115,22,.15);color:var(--or);border-color:var(--or)">
-      <i class="ti ti-cloud-upload"></i><span>Salvar</span>
-    </button>
     <div style="display:flex;align-items:center;gap:8px">
-    <div id="auth-area">
+      <button class="tbtn" id="btn-salvar-gs" onclick="gsSalvarTudo()" style="display:none;background:rgba(249,115,22,.15);color:var(--or);border-color:var(--or)">
+        <i class="ti ti-cloud-upload"></i><span>Salvar</span>
+      </button>
       <button class="tbtn" id="btn-login" onclick="gsLogin()" style="background:var(--or);color:#fff;border:none">
         <i class="ti ti-brand-google"></i><span>Conectar Google</span>
       </button>
       <button class="tbtn" id="btn-logout" onclick="gsLogout()" style="display:none">
         <i class="ti ti-logout"></i><span id="user-name"></span>
       </button>
+      <button class="tbtn" onclick="tgTheme()" id="tbtn">
+        <i class="ti ti-sun" id="ti"></i><span id="tl">Claro</span>
+      </button>
     </div>
-    <button class="tbtn" onclick="tgTheme()" id="tbtn">
-      <i class="ti ti-sun" id="ti"></i><span id="tl">Claro</span>
-    </button>
   </div>
   <div class="layout">
     <nav class="sb">
@@ -481,7 +480,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   </div></nav>
 </div>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
 
 <script>
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
