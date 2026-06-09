@@ -378,6 +378,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
                   <label>Nome <span style="color:var(--or)">*</span></label>
                   <input type="text" id="inv-nome" placeholder="Ex: CDB Banco Inter"/>
                 </div>
+                <div class="fr" style="grid-column:1/-1">
+                  <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:8px;padding:10px 12px;border:.5px solid var(--bd2)">
+                    <div class="sw" id="sw-saida-inv" onclick="toggleSaidaInv()" style="cursor:pointer"></div>
+                    <label onclick="toggleSaidaInv()" style="cursor:pointer;font-size:13px;color:var(--tp);flex:1">Registrar como saída em Lançamentos</label>
+                    <span style="font-size:11px;color:var(--ts)" id="sw-saida-inv-hint">desativado</span>
+                  </div>
+                </div>
                 <div class="fr">
                   <label>Instituição <span style="color:var(--ts);font-size:11px">(opcional)</span></label>
                   <input type="text" id="inv-inst" placeholder="Ex: Banco Inter"/>
@@ -411,6 +418,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
             </div>
             <div id="modal-fii" style="display:none">
               <div class="fg">
+                <div class="fr" style="grid-column:1/-1">
+                  <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:8px;padding:10px 12px;border:.5px solid var(--bd2)">
+                    <div class="sw" id="sw-saida-fii" onclick="toggleSaidaFii()" style="cursor:pointer"></div>
+                    <label onclick="toggleSaidaFii()" style="cursor:pointer;font-size:13px;color:var(--tp);flex:1">Registrar como saída em Lançamentos</label>
+                    <span style="font-size:11px;color:var(--ts)" id="sw-saida-fii-hint">desativado</span>
+                  </div>
+                </div>
                 <div class="fr"><label>Ticker</label><input type="text" id="fii-ticker" placeholder="Ex: HGLG11" style="text-transform:uppercase"/></div>
                 <div class="fr"><label>Quantidade de cotas</label><input type="number" id="fii-cotas" placeholder="0" min="1" oninput="calcTotalFII()"/></div>
                 <div class="fr"><label>Preço médio (R$)</label><input type="number" id="fii-pmedio" placeholder="0,00" min="0" step="0.01" oninput="calcTotalFII()"/></div>
@@ -487,7 +501,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <script>
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const CAT_COLORS={'Alimentação':'#f97316','Transporte':'#fb923c','Moradia':'#fdba74','Saúde':'#a78bfa','Educação':'#60a5fa','Filhas':'#f472b6','Lazer':'#34d399','Salário':'#4ade80','Outros':'#9ca3af'};
-const PATRIMONIO_INVEST=0;
+// patrimônio calculado dinamicamente
 
 const hoje=new Date();
 let mes=hoje.getMonth(),ano=hoje.getFullYear(),light=false,tipo='entrada',eid=null,nid=1,evolInst=null;
@@ -521,7 +535,8 @@ function renderDash(){
   document.getElementById('d-desp').textContent=fmt(desp);
   document.getElementById('d-saldo').textContent=fmt(saldo);
   document.getElementById('d-saldo').className='mv '+(saldo>=0?'c-or':'c-er');
-  document.getElementById('d-pat').textContent=fmt(PATRIMONIO_INVEST+saldo);
+  const totalInvest=invRF.reduce((s,r)=>s+r.atual,0)+invFII.reduce((s,f)=>s+f.cotas*f.vatual,0);
+  document.getElementById('d-pat').textContent=fmt(totalInvest+saldo);
 
   function dl(cur,prv){
     if(!prv)return'';
@@ -531,7 +546,7 @@ function renderDash(){
   document.getElementById('d-rec-d').textContent=dl(rec,prev.rec);
   document.getElementById('d-desp-d').textContent=dl(desp,prev.desp);
   document.getElementById('d-saldo-d').textContent=dl(saldo,prev.saldo);
-  document.getElementById('d-pat-d').textContent=fmt(saldo)+' adicionado este mês';
+  document.getElementById('d-pat-d').textContent='Invest.: '+fmt(totalInvest)+' · Saldo: '+(saldo>=0?'+':'')+fmt(saldo);
 
   const cats={};
   lista.filter(l=>l.tipo==='saida').forEach(l=>cats[l.cat]=(cats[l.cat]||0)+l.valor);
@@ -795,6 +810,11 @@ function abrirModalInv(tipo){
   document.getElementById('inv-taxa-val').value='';
   document.getElementById('inv-taxa-tipo').value='cdi';
   toggleTaxaTipo();
+  saidaInvAtivo=false;saidaFiiAtivo=false;
+  document.getElementById('sw-saida-inv').classList.remove('on');
+  document.getElementById('sw-saida-inv-hint').textContent='desativado';
+  document.getElementById('sw-saida-fii').classList.remove('on');
+  document.getElementById('sw-saida-fii-hint').textContent='desativado';
   document.getElementById('inv-venc').value='';
   document.getElementById('inv-atual-rf').value='';
   document.getElementById('fii-ticker').value='';
@@ -958,6 +978,27 @@ function aportarMeta(id){
   if(m){m.atual=Math.min(m.atual+val,m.alvo);renderMetas();if(gsToken)gsSalvarTudo();}
 }
 
+let saidaInvAtivo=false, saidaFiiAtivo=false;
+
+function toggleSaidaInv(){
+  saidaInvAtivo=!saidaInvAtivo;
+  document.getElementById('sw-saida-inv').classList.toggle('on',saidaInvAtivo);
+  document.getElementById('sw-saida-inv-hint').textContent=saidaInvAtivo?'ativado':'desativado';
+}
+
+function toggleSaidaFii(){
+  saidaFiiAtivo=!saidaFiiAtivo;
+  document.getElementById('sw-saida-fii').classList.toggle('on',saidaFiiAtivo);
+  document.getElementById('sw-saida-fii-hint').textContent=saidaFiiAtivo?'ativado':'desativado';
+}
+
+function criarLancamentoSaida(desc, valor, data){
+  const d=data||new Date().toISOString().split('T')[0];
+  dados.push({id:nid++,data:d,desc:'Investimento: '+desc,cat:'Outros',tipo:'saida',valor,obs:'lançado automaticamente'});
+  renderLanc();
+  renderDash();
+}
+
 function toggleTaxaTipo(){
   const t=document.getElementById('inv-taxa-tipo').value;
   const sufixos={'cdi':'% do CDI','aa':'% a.a.','ipca':'% a.a. + IPCA','outro':''};
@@ -991,6 +1032,10 @@ function salvarInv(){
     const atual=parseFloat(document.getElementById('inv-atual-rf').value)||aplicado;
     if(!nome||!aplicado){alert('Preencha nome e valor aplicado');return}
     invRF.push({id:invNid++,nome,inst,aplicado,taxa,venc,atual});
+    if(saidaInvAtivo&&aplicado>0)criarLancamentoSaida(nome,aplicado,null);
+    saidaInvAtivo=false;
+    document.getElementById('sw-saida-inv').classList.remove('on');
+    document.getElementById('sw-saida-inv-hint').textContent='desativado';
   } else {
     const ticker=document.getElementById('fii-ticker').value.trim().toUpperCase();
     const cotas=parseInt(document.getElementById('fii-cotas').value)||0;
@@ -999,6 +1044,10 @@ function salvarInv(){
     const div=parseFloat(document.getElementById('fii-div').value)||0;
     if(!ticker||!cotas||!pmedio){alert('Preencha ticker, cotas e preço médio');return}
     invFII.push({id:invNid++,ticker,cotas,pmedio,vatual,div});
+    if(saidaFiiAtivo&&pmedio>0)criarLancamentoSaida(ticker,cotas*pmedio,null);
+    saidaFiiAtivo=false;
+    document.getElementById('sw-saida-fii').classList.remove('on');
+    document.getElementById('sw-saida-fii-hint').textContent='desativado';
   }
   fecharModalInv();
   renderInv();
