@@ -116,7 +116,9 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .sw.on{background:var(--or)}
 .sw::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s}
 .sw.on::after{left:19px}
+.hide-mobile{display:table-cell}
 @media(max-width:640px){
+  .hide-mobile{display:none !important}
   .sb{display:none}.bn{display:block}
   .fg{grid-template-columns:1fr}.rsum{grid-template-columns:1fr 1fr}
   .hcat,.htipo{display:none}.main{padding:1rem}
@@ -130,7 +132,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <div class="topbar">
     <div class="logo"><div class="logo-dot"></div>Controle Financeiro</div>
     <div style="display:flex;align-items:center;gap:8px">
-      <button class="tbtn" id="btn-salvar-gs" onclick="gsSalvarTudo()" style="display:none;background:rgba(249,115,22,.15);color:var(--or);border-color:var(--or)">
+      <button class="tbtn" id="btn-salvar-gs" onclick="gsSalvarTudo(true)" style="display:none;background:rgba(249,115,22,.15);color:var(--or);border-color:var(--or)">
         <i class="ti ti-cloud-upload"></i><span>Salvar</span>
       </button>
       <button class="tbtn" id="btn-login" onclick="gsLogin()" style="background:var(--or);color:#fff;border:none">
@@ -320,14 +322,14 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
             <div class="ctitle" style="margin:0"><i class="ti ti-building-bank"></i>Renda fixa</div>
             <button class="bpri" style="width:auto;margin:0;padding:6px 12px;font-size:12px" onclick="abrirModalInv('rf')"><i class="ti ti-plus"></i>Adicionar</button>
           </div>
-          <div style="overflow-x:auto">
-            <table class="lt">
+          <div style="overflow-x:auto;max-width:100%">
+            <table class="lt" style="min-width:0">
               <thead><tr>
                 <th>Nome</th>
-                <th style="width:90px">Instituição</th>
+                <th style="width:90px" class="hide-mobile">Instituição</th>
                 <th style="width:100px;text-align:right">Aplicado</th>
-                <th style="width:90px">Taxa</th>
-                <th style="width:80px">Vencimento</th>
+                <th style="width:90px" class="hide-mobile">Taxa</th>
+                <th style="width:80px" class="hide-mobile">Vencimento</th>
                 <th style="width:100px;text-align:right">Valor atual</th>
                 <th style="width:44px"></th>
               </tr></thead>
@@ -342,13 +344,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
             <div class="ctitle" style="margin:0"><i class="ti ti-home"></i>Fundos imobiliários (FIIs)</div>
             <button class="bpri" style="width:auto;margin:0;padding:6px 12px;font-size:12px" onclick="abrirModalInv('fii')"><i class="ti ti-plus"></i>Adicionar</button>
           </div>
-          <div style="overflow-x:auto">
-            <table class="lt">
+          <div style="overflow-x:auto;max-width:100%">
+            <table class="lt" style="min-width:0">
               <thead><tr>
                 <th style="width:80px">Ticker</th>
                 <th style="width:70px;text-align:right">Cotas</th>
-                <th style="width:100px;text-align:right">Preço médio</th>
-                <th style="width:100px;text-align:right">Valor atual/cota</th>
+                <th style="width:100px;text-align:right" class="hide-mobile">Preço médio</th>
+                <th style="width:100px;text-align:right" class="hide-mobile">Valor atual/cota</th>
                 <th style="width:100px;text-align:right">Total atual</th>
                 <th style="width:100px;text-align:right">Dividendo/mês</th>
                 <th style="width:44px"></th>
@@ -638,6 +640,7 @@ function salvar(){
     limpar();
   }
   renderLanc();renderDash();
+  if(gsToken)gsSalvarTudo();
 }
 
 function limpar(){
@@ -757,10 +760,10 @@ function renderInv(){
     const rentPct=((rend/r.aplicado)*100).toFixed(1);
     return`<tr>
       <td>${r.nome}</td>
-      <td style="color:var(--ts);font-size:12px">${r.inst}</td>
+      <td style="color:var(--ts);font-size:12px" class="hide-mobile">${r.inst}</td>
       <td style="text-align:right">${fmtInv(r.aplicado)}</td>
-      <td><span style="background:var(--orb);color:var(--or);padding:2px 7px;border-radius:20px;font-size:11px;font-weight:500">${r.taxa}</span></td>
-      <td style="color:var(--ts);font-size:12px">${r.venc||'-'}</td>
+      <td class="hide-mobile"><span style="background:var(--orb);color:var(--or);padding:2px 7px;border-radius:20px;font-size:11px;font-weight:500">${r.taxa}</span></td>
+      <td style="color:var(--ts);font-size:12px" class="hide-mobile">${r.venc||'-'}</td>
       <td style="text-align:right"><span class="${rend>=0?'ap':'an'}">${fmtInv(r.atual)}</span><br><span style="font-size:11px;color:${rend>=0?'#4ade80':'#f87171'}">${rend>=0?'+':''}${rentPct}%</span></td>
       <td><button class="bi d" onclick="excluirInv('rf',${r.id})" aria-label="Excluir"><i class="ti ti-trash"></i></button></td>
     </tr>`;
@@ -775,8 +778,8 @@ function renderInv(){
     return`<tr>
       <td><strong style="color:var(--or)">${f.ticker}</strong></td>
       <td style="text-align:right">${f.cotas}</td>
-      <td style="text-align:right">${fmtInv(f.pmedio)}</td>
-      <td style="text-align:right">${fmtInv(f.vatual)}</td>
+      <td style="text-align:right" class="hide-mobile">${fmtInv(f.pmedio)}</td>
+      <td style="text-align:right" class="hide-mobile">${fmtInv(f.vatual)}</td>
       <td style="text-align:right"><span class="${rend>=0?'ap':'an'}">${fmtInv(total)}</span></td>
       <td style="text-align:right"><span style="color:#4ade80;font-weight:500">${fmtInv(f.div)}</span></td>
       <td><button class="bi d" onclick="excluirInv('fii',${f.id})" aria-label="Excluir"><i class="ti ti-trash"></i></button></td>
@@ -856,6 +859,7 @@ function pagarParcela(id){
   d.pagas++;
   renderDiv();
   renderDash();
+  if(gsToken)gsSalvarTudo();
 }
 
 
@@ -936,11 +940,13 @@ function salvarMeta(){
   metas.push({id:metNid++,desc,alvo,atual,prazo});
   fecharModalMeta();
   renderMetas();
+  if(gsToken)gsSalvarTudo();
 }
 
 function excluirMeta(id){
   metas=metas.filter(m=>m.id!==id);
   renderMetas();
+  if(gsToken)gsSalvarTudo();
 }
 
 function aportarMeta(id){
@@ -949,7 +955,7 @@ function aportarMeta(id){
   const val=parseFloat(v.replace(',','.'));
   if(!val||val<=0)return;
   const m=metas.find(x=>x.id===id);
-  if(m){m.atual=Math.min(m.atual+val,m.alvo);renderMetas();}
+  if(m){m.atual=Math.min(m.atual+val,m.alvo);renderMetas();if(gsToken)gsSalvarTudo();}
 }
 
 function toggleTaxaTipo(){
@@ -996,12 +1002,14 @@ function salvarInv(){
   }
   fecharModalInv();
   renderInv();
+  if(gsToken)gsSalvarTudo();
 }
 
 function excluirInv(tipo,id){
   if(tipo==='rf')invRF=invRF.filter(r=>r.id!==id);
   else invFII=invFII.filter(f=>f.id!==id);
   renderInv();
+  if(gsToken)gsSalvarTudo();
 }
 
 const MESES_PARC=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1173,8 +1181,8 @@ async function gsEscrever(aba,cabecalho,linhas){
   });
 }
 
-async function gsSalvarTudo(){
-  if(!gsToken){alert('Conecte sua conta Google primeiro.');return;}
+async function gsSalvarTudo(manual=false){
+  if(!gsToken){if(manual)alert('Conecte sua conta Google primeiro.');return;}
   try{
     // Lançamentos
     await gsEscrever('Lancamentos',
@@ -1201,7 +1209,7 @@ async function gsSalvarTudo(){
       ['id','desc','alvo','atual','prazo'],
       metas.map(m=>[m.id,m.desc,m.alvo,m.atual,m.prazo||''])
     );
-    gsMostrarToast('✅ Dados salvos no Google Sheets!');
+    if(manual)gsMostrarToast('✅ Dados salvos no Google Sheets!');
   }catch(e){
     gsMostrarToast('❌ Erro ao salvar. Verifique a conexão.');
     console.error(e);
