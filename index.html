@@ -500,7 +500,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 
 <script>
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const CAT_COLORS={'Alimentação':'#f97316','Transporte':'#fb923c','Moradia':'#fdba74','Saúde':'#a78bfa','Educação':'#60a5fa','Filhas':'#f472b6','Lazer':'#34d399','Salário':'#4ade80','Outros':'#9ca3af'};
+const CAT_COLORS={'Alimentação':'#f97316','Transporte':'#fb923c','Moradia':'#fdba74','Saúde':'#a78bfa','Educação':'#60a5fa','Filhas':'#f472b6','Lazer':'#34d399','Salário':'#4ade80','Investimentos':'#f97316','Outros':'#9ca3af'};
 // patrimônio calculado dinamicamente
 
 const hoje=new Date();
@@ -994,7 +994,7 @@ function toggleSaidaFii(){
 
 function criarLancamentoSaida(desc, valor, data){
   const d=data||new Date().toISOString().split('T')[0];
-  dados.push({id:nid++,data:d,desc:'Investimento: '+desc,cat:'Outros',tipo:'saida',valor,obs:'lançado automaticamente'});
+  dados.push({id:nid++,data:d,desc:'Investimento: '+desc,cat:'Investimentos',tipo:'saida',valor,obs:'lançado automaticamente'});
   renderLanc();
   renderDash();
 }
